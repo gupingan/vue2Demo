@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="app-1">
+      <!-- .native 原生事件监听，组件根 是 label 没有这个事件，所以使用 .native 无反应 -->
+      <base-input v-model="value" @focus="handleFocus" label="Click me or focus"></base-input>
+      <p style="color: red">value: {{ value }}</p>
+    </div>
+
+    <script>
+      Vue.component('base-input', {
+        inheritAttrs: false,
+        props: {
+          value: String,
+          label: String
+        },
+        computed: {
+          inputListeners() {
+            const vm = this
+            console.log(vm.$listeners)
+            return Object.assign({}, this.$listeners, {
+              input: function (event) {
+                vm.$emit('input', event.target.value)
+              },
+            })
+          },
+        },
+          // <input type="text" v-bind="$attrs" :value="value" @input='$emit("input", $event.target.value)' @focus="$emit('focus', $event)">
+        template: `
+        <label>
+          {{ label }}
+          <input type="text" v-bind="$attrs" :value="value" v-on="inputListeners">
+        </label>
+        `,
+      })
+
+      const vm = new Vue({
+        el: '#app-1',
+        methods: {
+          handleFocus(e) {
+            console.log('focus', e)
+          }
+        },
+        data: {
+          value: '',
+        },
+      })
+    </script>
+  </body>
+</html>

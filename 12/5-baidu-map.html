@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dependency Injection Baidu Maps Demo</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <script src="//api.map.baidu.com/api?type=webgl&v=1.0&ak=TylAMsH6wC841bgET8oFKPzvBmWbhERL"></script>
+    <script src="../vue.js"></script>
+    <style>
+      .map {
+        width: 100%;
+        height: 50vh;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <baidu-map ref="baiduMap">
+        <baidu-map-marker v-bind:places="vueConfCities"></baidu-map-marker>
+      </baidu-map>
+
+      <label>
+        名称：
+        <input type="text" v-model="newCityName" placeholder="name" />
+      </label>
+      <label>
+        坐标：
+        <input
+          type="text"
+          v-model="newCityPositionText"
+          placeholder="lat, lng"
+        />
+      </label>
+      <button @click="createNewCity">Create</button>
+
+      <ul>
+        <li v-for="city in vueConfCities">
+          <span
+            >{{ city.name }} -- ({{ city.position.lng }}, {{ city.position.lat
+            }})</span
+          >
+          <button @click="gotoCity(city.position)">Goto</button>
+          <button @click="deleteCity(city.id)">Delete</button>
+        </li>
+      </ul>
+    </div>
+
+    <script>
+      Vue.component('baidu-map', {
+        data: function () {
+          return {
+            map: null,
+          }
+        },
+        provide: function () {
+          return {
+            getMap: this.getMap,
+            clearOverlays: this.clearOverlays,
+            gotoPosition: this.gotoPosition,
+          }
+        },
+        mounted: function () {
+          this.map = new BMapGL.Map(this.$el)
+          this.map.centerAndZoom('贵阳市', 11)
+          this.map.enableScrollWheelZoom()
+        },
+        methods: {
+          getMap: function (foundFn) {
+            const vm = this
+            function checkForMap() {
+              if (vm.map) {
+                foundFn(vm.map)
+              } else {
+                setTimeout(checkForMap, 50)
+              }
+            }
+            checkForMap()
+          },
+          clearOverlays: function () {
+            if (!this.map) return
+            this.map.clearOverlays()
+          },
+          gotoPosition: function ({lng, lat}) {
+            if (!this.map) return
+            const point = new BMapGL.Point(lng, lat)
+            this.map.setCenter(point)
+          },
+        },
+        template: '<div class="map"><slot></slot></div>',
+      })
+
+      Vue.component('baidu-map-marker', {
+        props: ['places'],
+        inject: ['getMap', 'clearOverlays', 'gotoCity'],
+        watch: {
+          places() {
+            this.render()
+          },
+        },
+        methods: {
+          renderMarkers() {
+            const vm = this
+            vm.clearOverlays()
+            vm.getMap(function (map) {
+              vm.places.forEach(function (place) {
+                const point = new BMapGL.Point(
+                  place.position.lng,
+                  place.position.lat
+                )
+                const marker = new BMapGL.Marker(point, {
+                  title: place.name,
+                })
+                marker.addEventListener('click', function () {
+                  vm.gotoCity(place.position)
+                })
+                map.addOverlay(marker)
+              })
+            })
+          },
+        },
+        mounted: function () {
+          this.renderMarkers()
+
+        },
+        render() {
+          return null
+        },
+      })
+
+      const app = new Vue({
+        el: '#app',
+        data: {
+          newCityName: '',
+          newCityPositionText: '',
+          vueConfCities: [
+            {
+              id: 1,
+              name: '贵州省贵阳市清镇市滨湖大道',
+              position: {
+                lat: 26.565358,
+                lng: 106.463948,
+              },
+            },
+            {
+              id: 3,
+              name: '贵州省贵阳市观山湖区大关隧道',
+              position: {
+                lat: 26.614053,
+                lng: 106.675618,
+              },
+            },
+          ],
+        },
+        computed: {
+          newCityPosition() {
+            const [lat, lng] = this.newCityPositionText
+              .split(',')
+              .map((v) => parseFloat(v.trim()))
+            return { lat, lng }
+          },
+        },
+        provide() {
+          return {
+            gotoCity: this.gotoCity,
+          }
+        },
+        methods: {
+          deleteCity(id) {
+            this.vueConfCities = this.vueConfCities.filter(
+              (city) => city.id !== id
+            )
+          },
+          gotoCity(postion) {
+            this.$refs.baiduMap.gotoPosition(postion)
+          },
+          createNewCity() {
+            const maxId = Math.max(...this.vueConfCities.map((city) => city.id))
+            const newPosition = this.newCityPosition
+            if (!newPosition.lat || !newPosition.lng) {
+              alert('Invalid position')
+            } else {
+              this.vueConfCities.push({
+                id: maxId + 1,
+                name: this.newCityName,
+                position: newPosition,
+              })
+            }
+
+            this.newCityName = ''
+            this.newCityPositionText = ''
+          },
+        },
+      })
+    </script>
+  </body>
+</html>

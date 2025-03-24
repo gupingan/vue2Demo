@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="app-1">
+      <v-article v-bind.sync="doc"></v-article>
+      <p style="color: red">title: {{ doc.title }}</p>
+      <p style="color: blue">content: {{ doc.content }}</p>
+    </div>
+
+
+    <script>
+      Vue.component('v-article', {
+        props: ['title', 'content'],
+        methods: {
+          modifyTitle() {
+            this.$emit('update:title', '这是一个帅气的文章标题')
+          },
+          modifyContent() {
+            this.$emit('update:content', '这是一个帅气的文章内容')
+          }
+        },
+        template: `
+        <div>
+          <h1>{{ title }}</h1>
+          <section>{{ content }}</section>
+          <button @click="modifyTitle">更改标题</button>
+          <button @click="modifyContent">更改内容</button>
+        </div>
+        `,
+      })
+
+      const vm = new Vue({
+        el: '#app-1',
+        methods: {
+        },
+        data: {
+          doc: {
+            title: '文章标题',
+            content: '文章内容'
+          },
+        },
+      })
+    </script>
+  </body>
+</html>

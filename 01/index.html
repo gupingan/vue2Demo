@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="app-1">{{ message }}</div>
+
+    <div class="app-2">
+      <span v-bind:title="message">鼠标悬停查看信息</span>
+      <p>是否显示元素 {{seen}}</p>
+      <p v-if="seen">看得见我吗？</p>
+    </div>
+
+    <div id="app-3">
+      <ol style="all: initial">
+        <li v-for="todo in todoList">{{ todo.text }}</li>
+      </ol>
+    </div>
+
+    <div id="app-4">
+      <p>{{ message }}</p>
+      <button v-on:click="reverseMessage">反转消息</button>
+      <input type="text" v-model="message" />
+    </div>
+
+    <div class="app-5">
+      <ol>
+        <!-- 创建一个 todo-item 组件的实例 -->
+        <todo-item
+          v-for="item in groceryList"
+          v-bind:todo="item"
+          v-bind:key="item.id"
+        ></todo-item>
+      </ol>
+    </div>
+
+    <script>
+      const app = new Vue({
+        el: '#app-1',
+        data: {
+          message: 'Hello Vue!',
+        },
+      })
+
+      const app2 = new Vue({
+        el: '.app-2',
+        data: {
+          message: `页面加载于 ${new Date().toLocaleString()}`,
+          seen: true,
+        },
+      })
+
+      const todoList = [
+        { text: '学习 JavaScript' },
+        { text: '学习 Vue' },
+        { text: '整个牛项目' },
+      ]
+
+      // 延迟挂载
+      const app3 = new Vue({
+        data: {
+          todoList: todoList,
+        },
+      })
+
+      setTimeout(() => {
+        app3.$mount('#app-3')
+      }, 2000)
+
+      const app4 = new Vue({
+        el: '#app-4',
+        data: {
+          message: 'Hello Vue.js!',
+        },
+        methods: {
+          reverseMessage: function () {
+            this.message = this.message.split('').reverse().join('')
+          },
+        },
+      })
+
+      Vue.component('todo-item', {
+        template: '<li>{{ todo.text }}</li>',
+        props: ['todo'],
+      })
+
+      const app5 = new Vue({
+        el: '.app-5',
+        data: {
+          groceryList: [
+            { id: 0, text: '蔬菜' },
+            { id: 1, text: '奶酪' },
+            { id: 2, text: '随便其它什么人吃的东西' },
+          ],
+        },
+      })
+    </script>
+  </body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+    <script src="../lodash.min.js"></script>
+    <style>
+      .demo {
+        display: flex;
+        flex-direction: column;
+        margin: auto;
+        width: 270px;
+      }
+
+      .container {
+        margin-top: 10px;
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .cell {
+        display: flex;
+        width: 28px;
+        height: 28px;
+        border: 1px solid #ccc;
+        align-items: center;
+        justify-content: center;
+        margin-right: -1px;
+        margin-bottom: -1px;
+      }
+
+      .cell-move {
+        transition: transform 1s;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="demo" class="demo">
+      <button @click="shuffle">Shuffle</button>
+
+      <transition-group name="cell" tag="div" class="container">
+        <div v-for="cell in cells" :key="cell.id" class="cell">
+          {{ cell.number }}
+        </div>
+      </transition-group>
+    </div>
+
+    <script>
+      const vm = new Vue({
+        el: '#demo',
+        data: {
+          cells: Array.apply(null, { length: 81 }).map(function (_, index) {
+            return {
+              id: index,
+              number: (index % 9) + 1,
+            }
+          }),
+        },
+        methods: {
+          shuffle() {
+            this.cells = _.shuffle(this.cells)
+          },
+        },
+      })
+    </script>
+  </body>
+</html>

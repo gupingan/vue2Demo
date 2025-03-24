@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+    <style>
+      #app {
+        width: 500px;
+      }
+
+      .bounce-enter-active,
+      .bounce-leave-active {
+        transition: opacity 6s;
+      }
+
+      .bounce-enter-active {
+        animation: bounce-in 1s cubic-bezier(1, 0.5, 0.8, 1);
+      }
+
+      .bounce-leave-active {
+        animation: bounce-in 1s reverse;
+      }
+
+      .bounce-enter,
+      .bounce-leave-to {
+        opacity: 0;
+      }
+
+      @keyframes bounce-in {
+        0% {
+          transform: scale(0);
+        }
+        50% {
+          transform: scale(1.5);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <button @click="show = !show">Toggle</button>
+      <!-- 如果监听 transition 将会等待 transitionend 触发，这里 transition 时长比较长，所以 animation 结束后，还会看到 transition 动画后续 -->
+      <!-- <transition type="transition" name="bounce"> -->
+
+      <!-- 如果监听 animation，则触发 animationend 的时长较短，transition 不需要等待，Vue 会立即结束监听，也就看不到 transition 动画后续 -->
+      <transition type="animation" name="bounce">
+        <p v-if="show">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris
+          facilisis enim libero, at lacinia diam fermentum id. Pellentesque
+          habitant morbi tristique senectus et netus.
+        </p>
+      </transition>
+    </div>
+    <script>
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          show: true,
+        },
+      })
+    </script>
+  </body>
+</html>

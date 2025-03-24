@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+    <style>
+      .tabs-container {
+        width: 80%;
+        margin: 0 auto;
+      }
+      .tabs .tabs-headers {
+        display: flex;
+        border: 1px solid #ccc;
+        user-select: none;
+      }
+      .tabs .tabs-headers .tabs-button {
+        display: flex;
+        align-items: center;
+        padding: 0.5em 1em;
+        cursor: pointer;
+        border: none;
+        background: #f8f9fa;
+      }
+
+      .tabs .tabs-headers .tabs-button .tabs-button__text {
+        transition: all 0.1s ease-in-out;
+      }
+
+      .tabs .tabs-headers .tabs-button .tabs-button__text:hover {
+        color: #409eff;
+      }
+
+      .tabs .tabs-headers .tabs-button .tabs-button__close {
+        margin-left: 0.5em;
+        padding: 0.5em;
+        border-radius: 50%;
+        height: 100%;
+        width: 1em;
+        height: 1em;
+        line-height: 1em;
+        font-size: 0.6em;
+        text-align: center;
+        color: #409eff;
+        transition: all 0.1s ease-in-out;
+      }
+
+      .tabs .tabs-headers .tabs-button .tabs-button__close:hover {
+        background-color: #409eff;
+        color: white;
+      }
+
+      .tabs .tabs-headers .tabs-button.active {
+        background: #d4d5d6;
+      }
+      .tabs .tabs-content {
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-top: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app-1">
+      <my-tabs v-model="currentTab">
+        <my-tab-pane label="Home" name="first">
+          <h2>Home</h2>
+          <p>Home content</p>
+        </my-tab-pane>
+
+        <my-tab-pane label="Posts" name="second">
+          <h2>Posts</h2>
+          <p>Posts content</p>
+        </my-tab-pane>
+
+        <my-tab-pane label="Archive" name="third">
+          <h2>Archive</h2>
+          <p>Archive content</p>
+        </my-tab-pane>
+      </my-tabs>
+    </div>
+
+    <script>
+      Vue.component('my-tab-pane', {
+        props: {
+          label: { type: String, required: true },
+          name: { type: String, required: true },
+        },
+        template: `
+        <div v-if="internalIsShow" class="tab-pane" v-show="!isHidden">
+          <slot></slot>
+        </div>
+        `,
+        data: function () {
+          return {
+            internalIsShow: true,
+            isHidden: true,
+          }
+        },
+        methods: {
+          close: function () {
+            if (this.$parent.allTabPanes.length <= 1) return
+            this.internalIsShow = false
+            this.$parent.$emit('tabRemoved', this)
+          },
+          hidden: function () {
+            this.isHidden = true
+          },
+          active: function () {
+            this.isHidden = false
+          },
+        },
+        mounted() {
+          this.$parent.$emit('tabAdded', this)
+        },
+      })
+
+      Vue.component('my-tabs', {
+        props: ['value'],
+        template: `
+    <div class="tabs">
+      <div class="tabs-headers">
+        <div
+          class="tabs-button"
+          v-for="tabPane in allTabPanes"
+          :key="tabPane.name"
+          :class="{ 'active': tabPane.name === value }"
+          @click="selectTab(tabPane)"
+        >
+          <div class="tabs-button__text">{{ tabPane.label }}</div>
+          <div class="tabs-button__close" @click.stop="tabPane.close()">✕</div>
+        </div>
+      </div>
+      <div class="tabs-content">
+        <slot></slot>
+      </div>
+    </div>
+        `,
+        data: function () {
+          return {
+            allTabPanes: [],
+          }
+        },
+        methods: {
+          selectTab(tabPane) {
+            this.allTabPanes.forEach((pane) => {
+              pane.hidden()
+            })
+            tabPane.active()
+            this.$emit('input', tabPane.name)
+          },
+        },
+        created() {
+          this.$on('tabAdded', function (tabPane) {
+            this.allTabPanes.push(tabPane)
+          })
+          this.$on('tabRemoved', function (tabPane) {
+            const index = this.allTabPanes.indexOf(tabPane)
+            this.allTabPanes.splice(index, 1)
+
+            // 如果被删除的标签页是当前显示的标签页，则切换到下一个标签页
+            if (this.value === tabPane.name) {
+              const gotoIndex = Math.min(index, this.allTabPanes.length - 1)
+              this.selectTab(this.allTabPanes[gotoIndex])
+            }
+          })
+        },
+        mounted() {
+          const initShowTab = this.allTabPanes.find(
+            (tabPane) => tabPane.name === this.value
+          )
+          if (initShowTab) {
+            this.selectTab(initShowTab)
+          } else {
+            console.error('初始化显示的标签页不存在')
+          }
+        },
+      })
+
+      const vm = new Vue({
+        el: '#app-1',
+        data: {
+          currentTab: 'first',
+        },
+      })
+    </script>
+  </body>
+</html>

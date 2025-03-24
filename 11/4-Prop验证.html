@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="app-1">
+      <button @click="count++">父组件更改 {{ count }}</button>
+      <button-counter
+        :count="count"
+        :fn="fn2"
+        @increment="count++"
+      ></button-counter>
+    </div>
+
+    <script>
+      let ButtonCounter = {
+        props: {
+          count: {
+            type: Number,
+            // 对象或数组默认值必须从一个工厂函数获取
+            validator(value) {
+              // 自定义验证函数
+              return value >= 0
+            },
+            required: true,
+          },
+          fn: {
+            type: Function,
+          },
+        },
+        template: `
+        <div>
+          <button @click='$emit("increment")'>子组件更改 {{ count }}</button>
+          <button @click='fn'>调用 Fn</button>
+        </div>
+        `,
+      }
+
+      const vm = new Vue({
+        el: '#app-1',
+        data: {
+          count: 1,
+          fn2: function (event) {
+            console.log('fn2 called', event)
+          },
+        },
+        methods: {},
+        components: {
+          'button-counter': ButtonCounter,
+        },
+      })
+    </script>
+  </body>
+</html>

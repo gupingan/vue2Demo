@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+    <script src="../axios.min.js"></script>
+    <script src="../lodash.min.js"></script>
+    <style>
+      .active {
+        border: 1px solid blue;
+      }
+      .text-danger {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app-1">
+      <p class="static" :class="{active: isActive, 'text-danger': hasError}">
+        Hello World
+      </p>
+      <p :class="objClass">你好</p>
+      <p :class="computedClass">世界</p>
+      <p :class="arrayClass">你好世界</p>
+      <button @click="fontSize += 2">增大字号</button>
+      <p :style="{color: activeColor, fontSize: fontSize + 'px', transition: myTransition}">
+        世界是你们滴！
+      </p>
+      <p :style="objStyle">你们是祖国未来的花骨朵儿！</p>
+      更改颜色：<input type="text" v-model="activeColor" />
+      <p :style="[objStyle, objStyle2]">也支持数组语法绑定多个样式对象</p>
+      <div :style="{ display: ['-webkit-box', '-ms-flexbox', 'flex'] }">
+        <div>Hello World</div>
+        <div>你好世界</div>
+      </div>
+    </div>
+
+    <script>
+      const vm = new Vue({
+        el: '#app-1',
+        data: {
+          isActive: true,
+          hasError: false,
+          objClass: {
+            active: true,
+            'text-danger': true,
+          },
+          arrayClass: ['text-danger'],
+          activeColor: 'blue',
+          fontSize: 14,
+          objStyle: {
+            color: 'red',
+            fontSize: '20px',
+          },
+          objStyle2: {
+            border: '2px solid green',
+          },
+
+          myTransition: 'all .3s ease-in-out'
+        },
+        computed: {
+          computedClass() {
+            return {
+              active: this.isActive && !this.hasError,
+              'text-danger': this.hasError,
+            }
+          },
+
+          computedStyle() {
+            return {
+              color: this.activeColor,
+              fontSize: this.fontSize + 'px',
+            }
+          },
+        },
+      })
+    </script>
+  </body>
+</html>

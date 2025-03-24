@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+    <script src="../axios.min.js"></script>
+    <script src="../lodash.min.js"></script>
+  </head>
+  <body>
+    <div id="app-1">
+      <input type="text" v-model="firstName" />
+      <input type="text" v-model="lastName" />
+      <input type="text" v-model="fullName" />
+    </div>
+
+    <hr>
+
+    <div id="app-2">
+      询问问题: <input type="text" v-model="question" /> <button @click="deboucedGetAnswer()">手动提交</button>
+      <p style="all: initial; display: block;">答复: {{ answer }}</p>
+    </div>
+
+    <script>
+      const vm = new Vue({
+        el: '#app-1',
+        data: {
+          firstName: 'Yuxiang',
+          lastName: 'Gu',
+        },
+        computed: {
+          fullName: {
+            get() {
+              return this.firstName + ' ' + this.lastName
+            },
+            set(val) {
+              const names = val.split(' ')
+              if (names.length > 1) {
+                this.firstName = names[0]
+                this.lastName = names[names.length - 1]
+              }
+            },
+          },
+        },
+      })
+
+      const vmQuestion = new Vue({
+        el: '#app-2',
+        data: {
+          question: '',
+          answer: '当前没有提问，无法给出答案',
+        },
+        watch: {
+          question: function (newVal) {
+            this.answer = '等待提问结束……'
+            // this.deboucedGetAnswer()
+          },
+        },
+        created: function () {
+          this.deboucedGetAnswer = _.debounce(this.getAnswer, 800)
+        },
+        methods: {
+          getAnswer: function () {
+            if (this.question.indexOf('？') === -1) {
+              this.answer = '问题中必须包含结束符号（问号？）'
+              return
+            }
+
+            this.answer = '思考中……'
+
+            let vm = this
+            axios
+              .get('https://yesno.wtf/api')
+              .then(function (response) {
+                vm.answer = _.capitalize(response.data.answer)
+              })
+              .catch(function (error) {
+                vm.answer = '无法获取答案，原因是：' + error
+              })
+          },
+        },
+      })
+    </script>
+  </body>
+</html>

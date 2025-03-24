@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+    <script src="../TweenLite.min.js"></script>
+    <style>
+      polygon {
+        fill: #41b883;
+      }
+      circle {
+        fill: transparent;
+        stroke: #35495e;
+      }
+
+      label,
+      input[type='range'] {
+        display: block;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <svg width="200" height="200">
+        <polygon :points="points"></polygon>
+        <circle cx="100" cy="100" r="90"></circle>
+      </svg>
+      <label>Sides: {{ sides }}</label>
+      <input type="range" min="3" max="500" v-model.number="sides" />
+      <label>Minimum Radius: {{ minRadius }}%</label>
+      <input type="range" min="0" max="90" v-model.number="minRadius" />
+      <label>Update Interval: {{ updateInterval }} milliseconds</label>
+      <input type="range" min="10" max="2000" v-model.number="updateInterval" />
+    </div>
+
+    <script>
+      const vm = new Vue({
+        el: '#app',
+        data: function () {
+          var defaultSides = 3
+          var stats = Array.apply(null, { length: defaultSides }).map(
+            function () {
+              return 100
+            }
+          )
+          return {
+            stats: stats,
+            points: generatePoints(stats),
+            sides: defaultSides,
+            minRadius: 50,
+            interval: null,
+            updateInterval: 500,
+          }
+        },
+        watch: {
+          stats(newStats) {
+            TweenLite.to(this.$data, this.updateInterval / 1000, {
+              points: generatePoints(newStats),
+            })
+          },
+          updateInterval() {
+            this.resetInterval()
+          },
+          sides(newSides, oldSides) {
+            const diff = newSides - oldSides
+            if (diff === 0) return
+
+            if (diff > 0) {
+              for (let i = 0; i < diff; i++) {
+                this.stats.push(this.newRandomValue())
+              }
+            } else {
+              for (let i = 0; i < Math.abs(diff); i++) {
+                this.stats.shift()
+              }
+            }
+          },
+        },
+        methods: {
+          randomizeStats() {
+            const vm = this
+            this.stats = this.stats.map(function () {
+              return vm.newRandomValue()
+            })
+          },
+          newRandomValue() {
+            return Math.ceil(
+              this.minRadius + Math.random() * (100 - this.minRadius)
+            )
+          },
+          resetInterval() {
+            const vm = this
+            clearInterval(this.interval)
+            this.randomizeStats()
+            this.interval = setInterval(function () {
+              vm.randomizeStats()
+            }, this.updateInterval)
+          },
+        },
+        mounted() {
+          this.resetInterval()
+        },
+      })
+
+      function valueToPoint(value, index, total) {
+        var length = value * 0.9
+        var angle = ((Math.PI * 2) / total) * index
+        var cos = Math.cos(angle)
+        var sin = Math.sin(angle)
+        var tx = length * sin + 100
+        var ty = length * cos + 100
+        return { x: tx, y: ty }
+      }
+
+      function generatePoints(stats) {
+        var total = stats.length
+        return stats
+          .map(function (stat, index) {
+            var point = valueToPoint(stat, index, total)
+            return point.x + ',' + point.y
+          })
+          .join(' ')
+      }
+    </script>
+  </body>
+</html>

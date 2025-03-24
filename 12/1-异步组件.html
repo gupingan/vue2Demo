@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="app-1">
+      <v-tab-archive></v-tab-archive>
+      <button-counter></button-counter>
+      <button-counter2></button-counter2>
+      <button-counter3></button-counter3>
+    </div>
+
+    <script>
+      Vue.component('v-tab-archive', function (resolve, reject) {
+        setTimeout(() => {
+          resolve({
+            template: `<div>Archive component</div>`,
+          })
+        }, 1000)
+      })
+
+      // Vue.component('button-counter', function(resolve) {
+      //   require(['../11/components/ButtonCounter.js'], resolve)
+      // })
+      
+      Vue.component('button-counter', () => import('../11/components/ButtonCounter.js'))
+      Vue.component('button-counter3',  ()=> {
+        return {
+          component: import('../11/components/ButtonCounter.js'),
+          loading: () => {
+            return {
+              template: `<div>loading...</div>`
+            }
+          },
+          error: () => {
+            return {
+              template: `<div>error</div>`
+            }
+          },
+          delay: 200,
+          timeout: 3000
+        }
+      })
+
+      const vm = new Vue({
+        el: '#app-1',
+        data: {},
+        methods: {},
+        components: {
+          'button-counter2': () => import('../11/components/ButtonCounter.js'),
+        }
+      })
+    </script>
+  </body>
+</html>

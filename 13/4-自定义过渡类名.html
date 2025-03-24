@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+    <link rel="stylesheet" href="../animate.min.css" />
+    <style>
+      #app {
+        width: 500px;
+      }
+
+      .enter {
+        color: red;
+      }
+
+      .enter-to {
+        color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <button @click="show = !show">Toggle</button>
+      <transition
+        name="custom"
+        enter-class="enter"
+        enter-active-class="animate__animated animate__rubberBand enter-active"
+        enter-to-class="enter-to"
+        leave-active-class="animate__animated animate__backOutUp"
+      >
+        <p v-if="show">
+          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptatum
+          cupiditate quibusdam numquam laborum, ut quam voluptatibus accusamus
+          obcaecati, est consequatur ducimus minus ea porro doloribus
+          repudiandae perspiciatis, corporis saepe id!
+        </p>
+      </transition>
+    </div>
+    <script>
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          show: true,
+        },
+      })
+    </script>
+  </body>
+</html>

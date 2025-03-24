@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+    <script src="../velocity.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      Fade In:
+      <input
+        type="range"
+        v-model.number="fadeInDuration"
+        min="0"
+        :max="maxFadeDuration"
+      />
+      Fade Out:
+      <input
+        type="range"
+        v-model.number="fadeOutDuration"
+        min="0"
+        :max="maxFadeDuration"
+      />
+      <button v-if="stop" @click="stop=false; show=!show">Start</button>
+      <button v-else @click="stop=true">Stop</button>
+      <my-transition
+        v-model="show"
+        :stop="stop"
+        :fade-in-duration="fadeInDuration"
+        :fade-out-duration="fadeOutDuration"
+      >
+        <p>Demo</p>
+      </my-transition>
+    </div>
+    <script>
+      Vue.component('my-transition', {
+        model: {
+          prop: 'show',
+          event: 'change',
+        },
+        props: {
+          show: {
+            type: Boolean,
+            required: true,
+          },
+          stop: {
+            type: Boolean,
+            required: true,
+          },
+          fadeInDuration: {
+            type: Number,
+            required: true,
+          },
+          fadeOutDuration: {
+            type: Number,
+            required: true,
+          },
+        },
+        template: `
+      <transition @before-enter="beforeEnter" @enter="enter" @leave="leave">
+        <slot v-if="show"></slot>
+      </transition>
+        `,
+        methods: {
+          beforeEnter(el) {
+            el.style.opacity = 0
+          },
+          enter(el, done) {
+            const vm = this
+            Velocity(
+              el,
+              { opacity: 1 },
+              {
+                duration: this.fadeInDuration,
+                complete: function () {
+                  done()
+                  if (!vm.stop) {
+                    vm.$emit('change', false)
+                  }
+                },
+              }
+            )
+          },
+          leave(el, done) {
+            const vm = this
+            Velocity(
+              el,
+              {
+                opacity: 0,
+              },
+              {
+                duration: this.fadeOutDuration,
+                complete: function () {
+                  done()
+                  vm.$emit('change', true)
+                },
+              }
+            )
+          },
+        },
+      })
+
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          show: true,
+          stop: true,
+          fadeInDuration: 1000,
+          fadeOutDuration: 1000,
+          maxFadeDuration: 2000,
+        },
+        mounted() {
+          this.show = false
+        },
+        methods: {},
+      })
+    </script>
+  </body>
+</html>

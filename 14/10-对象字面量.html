@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="demo">
+      <div v-style="demoData"></div>
+    </div>
+
+    <script>
+      Vue.directive('style', function (el, binding) {
+        el.innerHTML = `<div>${binding.value.text}</div>`
+        for (const key in binding.value) {
+          if (el.style.hasOwnProperty(key)) {
+            el.style[key] = binding.value[key]
+          }
+        }
+      })
+
+      const vm = new Vue({
+        el: '#demo',
+        data: {
+          demoData: {
+            color: 'red',
+            text: 'hello!',
+          },
+        },
+      })
+    </script>
+  </body>
+</html>

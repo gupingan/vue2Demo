@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="app-1">
+      <!-- V-bind 用法 -->
+      <div v-bind="{style: 'margin-bottom: 20px;', 'custom-attr': true}"></div>
+      <base-input
+        label="Username"
+        v-model="username"
+        :required="true"
+        placeholder="请输入用户名"
+        style="border: 1px solid red; border-radius: 8px; padding: 10px;"
+      ></base-input>
+      <p>当前用户名：{{ username }}</p>
+    </div>
+
+    <script>
+      let BaseInput = {
+        inheritAttrs: false,
+        props: ['label', 'value'],
+        template: `
+        <label>
+          {{ label }}
+          <input v-bind="$attrs" v-bind:value="value" v-on:input="$emit('input', $event.target.value)"/>
+        </label>
+        `,
+      }
+
+      const vm = new Vue({
+        el: '#app-1',
+        data: {
+          username: 'g332920287@foxmail.com',
+        },
+        methods: {},
+        components: {
+          'base-input': BaseInput,
+        },
+      })
+    </script>
+  </body>
+</html>

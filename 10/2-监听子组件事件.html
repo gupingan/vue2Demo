@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="app-1">
+      <div :style="{ fontSize: postFontSize + 'em' }">
+        <blog-post
+          v-for="post in posts"
+          :key="post.id"
+          :post="post"
+          @enlarge-text="onElargeText"
+        ></blog-post>
+      </div>
+    </div>
+
+    <script>
+      Vue.component('blog-post', {
+        props: ['post'],
+        template: `
+        <div class="blog-post">
+          <h3>{{ post.title }}</h3>
+          <button v-on:click="$emit('enlarge-text', 0.01)">
+            放大文本
+          </button>
+          <div v-html="post.content"></div>
+        </div>
+        `,
+      })
+
+      const vm = new Vue({
+        el: '#app-1',
+        data: {
+          postFontSize: 1,
+          posts: [
+            {
+              id: 1,
+              title: '博文标题1',
+              content: '这是博文内容1, <strong>强调</strong>部分',
+            },
+            {
+              id: 2,
+              title: '博文标题2',
+              content: '这是博文内容2, <strong>强调</strong>部分',
+            },
+            {
+              id: 3,
+              title: '博文标题3',
+              content: '这是博文内容3, <strong>强调</strong>部分',
+            },
+            {
+              id: 4,
+              title: '博文标题4',
+              content: '这是博文内容4, <strong>强调</strong>部分',
+            },
+          ],
+        },
+        methods: {
+          onElargeText: function(amount) {
+            this.postFontSize += amount
+          }
+        },
+      })
+    </script>
+  </body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="app-1">
+      <button-counter></button-counter>
+      <button-counter></button-counter>
+      <button-counter></button-counter>
+
+      <!-- <blog-post title="博文标题1"></blog-post>
+      <blog-post title="博文标题2"></blog-post>
+      <blog-post title="博文标题3"></blog-post> -->
+      <!-- <blog-post v-for="post in posts" :key="post.id" :title="post.title"></blog-post> -->
+      <blog-post v-for="post in posts" :key="post.id" :post="post"></blog-post>
+    </div>
+
+    <script>
+      Vue.component('button-counter', {
+        data: function () {
+          return {
+            count: 0,
+          }
+        },
+        template: `<button @click='count++'>You clicked me {{ count }} times.</button>`,
+      })
+
+      Vue.component('blog-post', {
+        props: ['post'],
+        template: `
+        <div class="blog-post">
+          <h3>{{ post.title }}</h3>
+          <div v-html="post.content"></div>
+        </div>
+        `,
+      })
+
+      const vm = new Vue({
+        el: '#app-1',
+        data: {
+          posts: [
+            {
+              id: 1,
+              title: '博文标题1',
+              content: '这是博文内容1, <strong>强调</strong>部分'
+            },
+            {
+              id: 2,
+              title: '博文标题2',
+              content: '这是博文内容2, <strong>强调</strong>部分'
+            },
+            {
+              id: 3,
+              title: '博文标题3',
+              content: '这是博文内容3, <strong>强调</strong>部分'
+            },
+            {
+              id: 4,
+              title: '博文标题4',
+              content: '这是博文内容4, <strong>强调</strong>部分'
+            },
+          ]
+        },
+        methods: {},
+      })
+    </script>
+  </body>
+</html>

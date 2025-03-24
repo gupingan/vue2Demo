@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="app-1">
+      <p v-once>{{ a }}</p>
+      <p>Using mustaches: {{ b }}</p>
+      <p>Using v-html directive: <span v-html="b"></span></p>
+      <button v-on:click="a += 1">change it</button>
+      <button :disabled="isButtonDisabled">Button: {{ isButtonDisabled ? 'disabled' : 'enabled' }}</button>
+      <button v-on:click="isButtonDisabled = !isButtonDisabled">change disabled</button>
+      <p>访问全局变量 {{ Math }}</p>
+      <p v-if="seen">现在你看到我了</p>
+      <button @click="seen = !seen">change v-if</button>
+      <div @click="click1">
+        <div @click.stop="click2">click me</div>
+      </div>
+    </div>
+
+    <script>
+      window.OK = 123
+
+      const vm = new Vue({
+        el: '#app-1',
+        data: {
+          a: 1,
+          b: '<a href="#app-1">超链接</a>',
+          isButtonDisabled: true,
+          seen: true,
+        },
+        methods: {
+          unwatch: function () {
+            unwatch()
+          },
+          destroy: function () {
+            vm.$destroy()
+          },
+          click1: function () {
+            console.log('click1')
+          },
+          click2: function () {
+            console.log('click2')
+          },
+        },
+      })
+    </script>
+  </body>
+</html>

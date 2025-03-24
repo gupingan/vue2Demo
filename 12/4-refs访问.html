@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Document</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <button-counter ref="btnCounter"></button-counter>
+      <!-- 其数据是响应式的, 但是 $ref 不是响应式的 -->
+      <button @click="changeNumber(100)">改数字为 100</button>
+      <button @click="logChildren">打印 $children</button>
+      <button @click="logRefs">打印 $refs</button>
+      <button @click="destroyBtnCounter">销毁 btnCounter</button>
+    </div>
+
+    <script>
+      Vue.component('button-counter', {
+        template: '<button @click="increment">{{ counter }}</button>',
+        data() {
+          return {
+            counter: 0,
+          }
+        },
+        methods: {
+          increment() {
+            this.counter++
+          },
+        },
+      })
+
+      const vm = new Vue({
+        el: '#app',
+        data: {
+        },
+        methods: {
+          changeNumber(value) {
+            this.$refs.btnCounter.counter = value
+          },
+          logChildren() {
+            console.log(this.$children)
+          },
+          logRefs() {
+            console.log(this.$refs)
+          },
+          destroyBtnCounter() {
+            this.$refs.btnCounter.$destroy()
+          }
+        },
+      })
+    </script>
+  </body>
+</html>

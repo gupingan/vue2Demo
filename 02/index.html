@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="app-1">
+      {{ a }}
+      <!-- <p>{{ b }}</p> -->
+      <button v-on:click="a += 1">change it</button>
+      <button v-on:click="unwatch">cancel watch</button>
+      <button v-on:click="destroy">destroy vm</button>
+    </div>
+
+    <script>
+      const data = { a: 1 }
+      // Object.freeze(data)
+      // data.b = 2
+
+      const vm = new Vue({
+        el: '#app-1',
+        data: data,
+        methods: {
+          unwatch: function() {
+            unwatch()
+          },
+          destroy: function() {
+            vm.$destroy()
+          }
+        },
+        beforeCreate: function () {
+          console.log('beforeCreate', this)
+        },
+        created: function() {
+          console.log('created', this)
+        },
+        beforeMount: function() {
+          console.log('beforeMount', this)
+        },
+        mounted: function() {
+          console.log('mounted', this)
+        },
+        beforeUpdate: function() {
+          console.log('beforeUpdate', this)
+        },
+        updated: function() {
+          console.log('updated', this)
+        },
+        beforeDestroy: function() {
+          console.log('beforeDestroy', this)
+        },
+        destroyed: function() {
+          console.log('destroyed', this)
+        }
+      })
+
+      // data.b = 2
+
+      console.log(vm.a === data.a)
+
+
+      console.log(vm.$data === data)
+      console.log(vm.$el === document.getElementById('app-1'))
+
+      const unwatch = vm.$watch('a', function(newVal, oldVal) {
+        console.log('a', newVal, oldVal)
+      })
+
+      /**
+       * new Vue()
+       * Init Events & Lifecycle
+       * beforeCreate
+       * Init injections & reactivity
+       * created
+       * Has el
+       * yes -> has template
+       * no -> when mount(el) -> has template
+       * yes -> Compile template
+       * no -> Comile el outerHtml
+       * beforeMount
+       * create vm.$el and replace el with it
+       * mounted(when data changed -> beforeUpdate -> Virtual DOM re-render and patch -> updated)
+       * when destroy() is called
+       * beforeDestroy
+       * Teardown watchers, child components and event listeners
+       * Destroyed(destroyed)
+       */
+    </script>
+  </body>
+</html>

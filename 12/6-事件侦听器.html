@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Document</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <script src="../vue.js"></script>
+    <script src="../moment.min.js"></script>
+    <script src="../pikaday.js"></script>
+    <link rel="stylesheet" href="../pikaday.css">
+  </head>
+  <body>
+    <div id="app">
+      <input ref="dateInput" v-model="date" type="text" />
+    </div>
+
+    <script>
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          date: null
+        },
+        mounted: function() {
+          const vm = this
+          const picker = new Pikaday({
+            field: this.$refs.dateInput,
+            format: 'YYYY-MM-DD',
+            onSelect: function(date) {
+              vm.date = this.getMoment().format('YYYY-MM-DD')
+            },
+          })
+
+          console.log("mounted", picker)
+
+          this.$once("hook:beforeDestroy", function () {
+            console.log("beforeDestroy", picker)
+            picker.destroy()
+          })
+        },
+        methods: {},
+      })
+    </script>
+  </body>
+</html>

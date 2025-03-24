@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="app-1">
+      <v-tab-archive></v-tab-archive>
+      a : {{ a }}
+    </div>
+
+    <script>
+      Vue.component('v-tab-archive',{
+        template: `<div>Archive component</div>`,
+        mounted() {
+          console.log(this.$root)
+          console.log(this.$root.aplus)
+          this.$root.test()
+          this.$root.a = 998
+          console.log(this.$root.a)
+
+          console.log(this.$parent === this.$root)
+        }
+      })
+
+      const vm = new Vue({
+        el: '#app-1',
+        data: {
+          a: 2
+        },
+        methods: {
+          test() {
+            console.log('test')
+          }
+        },
+        computed: {
+          aplus() {
+            return this.a++
+          }
+        }
+      })
+
+      console.log(vm.$root === vm)
+    </script>
+  </body>
+</html>

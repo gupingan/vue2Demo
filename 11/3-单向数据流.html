@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="app-1">
+      <button @click="count++">父组件更改 {{ count }}</button>
+      <button-counter :count="count" @increment="count++"></button-counter>
+    </div>
+
+    <script>
+      let ButtonCounter = {
+        props: {
+          count: Number,
+        },
+        template: `<button @click='$emit("increment")'>子组件更改 {{ count }}</button>`,
+      }
+
+      const vm = new Vue({
+        el: '#app-1',
+        data: {
+          count: 0,
+        },
+        methods: {},
+        components: {
+          'button-counter': ButtonCounter,
+        },
+      })
+    </script>
+  </body>
+</html>

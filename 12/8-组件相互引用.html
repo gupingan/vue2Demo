@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Single File Folder Tree</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <tree-folder :folder="rootFolder"></tree-folder>
+    </div>
+
+    <script>
+      const TreeFolderContents = {
+        template: `
+          <ul>
+            <li v-for="child in children" :key="child.name">
+              <tree-folder v-if="child.children" :folder="child"/>
+              <span v-else>{{ child.name }}</span>
+            </li>
+          </ul>
+        `,
+        props: ['children'],
+        beforeCreate() {
+          this.$options.components['tree-folder'] = TreeFolder
+        },
+      }
+
+      const TreeFolder = {
+        template: `
+          <p>
+            <span>{{ folder.name }}</span>
+            <tree-folder-contents 
+              :children="folder.children" 
+              v-if="hasContents"
+            />
+          </p>
+        `,
+        props: ['folder'],
+        data() {
+          return {
+            hasContents: this.folder.children?.length > 0,
+          }
+        },
+        beforeCreate() {
+          this.$options.components['tree-folder-contents'] = TreeFolderContents
+        },
+      }
+
+      // 创建 Vue 实例并挂载
+      const app = new Vue({
+        el: '#app',
+        data: {
+          rootFolder: {
+            name: '我的文档',
+            children: [
+              {
+                name: '项目',
+                children: [
+                  { name: '源代码', children: [] },
+                  {
+                    name: '文档',
+                    children: [{ name: '30天精通 Python 爬虫.pdf' }, { name: 'jQuery 查询手册.doc' }],
+                  },
+                ],
+              },
+              {
+                name: '资料',
+                children: [{ name: '简历.pdf', children: [] }],
+              },
+            ],
+          },
+        },
+        beforeCreate() {
+          this.$options.components['tree-folder'] = TreeFolder
+        },
+      })
+    </script>
+  </body>
+</html>

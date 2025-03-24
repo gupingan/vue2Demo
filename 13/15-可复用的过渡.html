@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+    <script src="../velocity.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <button @click="show = !show">Toggle</button>
+      <my-transition>
+        <p v-if="show">Demo</p>
+      </my-transition>
+
+      <fn-transition>
+        <p v-if="show">Demo</p>
+      </fn-transition>
+    </div>
+    <script>
+      Vue.component('my-transition', {
+        template: `
+      <transition @before-enter="beforeEnter" @enter="enter" @leave="leave">
+        <slot></slot>
+      </transition>
+        `,
+        methods: {
+          beforeEnter(el) {
+            el.style.opacity = 0
+            el.style.transformOrigin = 'left'
+          },
+          enter(el, done) {
+            Velocity(el, { opacity: 1, fontSize: '1.4em' }, { duration: 300 })
+            Velocity(el, { fontSize: '1em' }, { complete: done })
+          },
+          leave(el, done) {
+            Velocity(
+              el,
+              { translateX: '15px', rotateZ: '50deg' },
+              { duration: 600 }
+            )
+            Velocity(el, { rotateZ: '100deg' }, { loop: 2 })
+            Velocity(
+              el,
+              {
+                rotateZ: '45deg',
+                translateY: '30px',
+                translateX: '30px',
+                opacity: 0,
+              },
+              { complete: done }
+            )
+          },
+        },
+      })
+
+      Vue.component('fn-transition', {
+        functional: true,
+        render(h, context) {
+          const data = {
+            props: {
+              name: 'vue-fn-transition',
+              mode: 'out-in',
+            },
+            on: {
+              beforeEnter(el) {
+                el.style.opacity = 0
+                el.style.transformOrigin = 'left'
+              },
+              enter(el, done) {
+                Velocity(
+                  el,
+                  { opacity: 1, fontSize: '1.4em' },
+                  { duration: 300 }
+                )
+                Velocity(el, { fontSize: '1em' }, { complete: done })
+              },
+              leave(el, done) {
+                Velocity(
+                  el,
+                  { translateX: '15px', rotateZ: '50deg' },
+                  { duration: 600 }
+                )
+                Velocity(el, { rotateZ: '100deg' }, { loop: 2 })
+                Velocity(
+                  el,
+                  {
+                    rotateZ: '45deg',
+                    translateY: '30px',
+                    translateX: '30px',
+                    opacity: 0,
+                  },
+                  { complete: done }
+                )
+              },
+            },
+          }
+
+          return h('transition', data, context.children)
+        },
+      })
+
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          show: false,
+        },
+        methods: {},
+      })
+    </script>
+  </body>
+</html>

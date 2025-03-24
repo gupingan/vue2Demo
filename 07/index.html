@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="app-1">
+      <ul>
+        <li v-for="item in items">{{ item.message }}</li>
+      </ul>
+      <hr />
+      <ul>
+        <li v-for="item, index in items">{{ item.message }} -- {{ index }}</li>
+      </ul>
+      <hr />
+      <ul>
+        <li v-for="item of items">{{ item.message }}</li>
+      </ul>
+      <hr />
+      <ul>
+        <li v-for="item, index of items">{{ item.message }} -- {{ index }}</li>
+      </ul>
+      <hr />
+      <ul>
+        <li v-for="value of object">{{ value }}</li>
+      </ul>
+      <hr />
+      <ul>
+        <li v-for="value, name, index in object">
+          {{ index }} -- {{ name }} -- {{ value }}
+        </li>
+      </ul>
+      <hr />
+      <ul>
+        <li v-for="info, index in infos" :key="info.id">
+          {{ index }} -- {{ info }}
+        </li>
+      </ul>
+      <hr />
+      <li v-for="n in evenNumbers">{{ n }}</li>
+      <hr />
+      <ul v-for="set1 in sets2">
+        <li v-for="n in even(set1)">{{ n }}</li>
+      </ul>
+      <hr>
+      <div><span v-for="n in 10">{{ n }} </span></div>
+
+      <hr>
+      <ul>
+        <template v-for="item in items">
+          <li>{{ item.message }}</li>
+          <li class="divider" role="presentation"></li>
+        </template>
+      </ul>
+    </div>
+
+    <script>
+      const vm = new Vue({
+        el: '#app-1',
+        data: {
+          items: [{ message: 'Foo' }, { message: 'Bar' }],
+          object: {
+            title: 'How to do lists in Vue',
+            author: 'Jane Doe',
+            publishedAt: '2016-04-10',
+          },
+          infos: [
+            { name: 'John', age: 30, id: 2 },
+            { name: 'Jane', age: 32, id: 3 },
+            { name: 'Jim', age: 36, id: 1 },
+          ],
+          numbers: [1, 2, 3, 4, 5],
+          sets2: [
+            [1, 2, 3, 4, 5],
+            [6, 7, 8, 9, 10],
+          ],
+        },
+        methods: {
+          even: function (sets) {
+            return sets.filter(function (number) {
+              return number % 2 === 0
+            })
+          },
+        },
+        computed: {
+          evenNumbers: function () {
+            return this.numbers.filter((n) => n % 2 === 0)
+          },
+        },
+      })
+    </script>
+  </body>
+</html>

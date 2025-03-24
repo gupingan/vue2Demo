@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <script>
+      const myMixin = {
+        data() {
+          return {
+            message: 'hello',
+            foo: 'abc',
+          }
+        },
+      }
+
+      Vue.mixin(myMixin)
+
+      new Vue({
+        created() {
+          console.log(this.message, this.foo)
+        },
+      })
+    </script>
+  </body>
+</html>

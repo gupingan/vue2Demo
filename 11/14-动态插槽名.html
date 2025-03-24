@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="app-1">
+      <v-title>
+        <!-- 在 DOM 中使用模板时 (直接在一个 HTML 文件里撰写模板)，还需要避免使用大写字符来命名键名，因为浏览器会把 attribute 名全部强制转为小写 -->
+        <template v-slot:[titletype]>你好，世界</template>
+      </v-title>
+
+      <button @click="modifyTitleType('big-title')">大标题</button>
+      <button @click="modifyTitleType('small-title')">小标题</button>
+      <button @click="modifyTitleType('default')">重置标题</button>
+    </div>
+
+    <script>
+      Vue.component('v-title', {
+        template: `
+        <div>
+          <h1>
+            <slot name="big-title"></slot>  
+          </h1>
+          <h3>
+            <slot name="default"></slot>  
+          </h3>
+          <h6>
+            <slot name="small-title"></slot>  
+          </h6>
+        </div>
+        `,
+      })
+
+      const vm = new Vue({
+        el: '#app-1',
+        data: {
+          titletype: 'default'
+        },
+        methods: {
+          modifyTitleType(type) {
+            this.titletype = type
+          }
+        }
+      })
+    </script>
+  </body>
+</html>

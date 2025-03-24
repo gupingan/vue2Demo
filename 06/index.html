@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="app-1">
+      <h1 v-if="awesome">Vue is awesome!</h1>
+      <h1 v-else>Oh no 😢</h1>
+      <button @click="awesome = !awesome">
+        {{ awesome ? '我不同意': 'Vue 就是好' }}</button
+      ><br />
+
+      <!-- 用于分组 -->
+      <template v-if="hiddenTemplate">
+        <h1>Title</h1>
+        <p>Paragraph 1</p>
+        <p>Paragraph 2</p>
+      </template>
+
+      <button @click="hiddenTemplate = !hiddenTemplate">
+        {{ hiddenTemplate ? '隐藏Template': '显示Template' }}
+      </button>
+
+      <!-- 随机显示 -->
+      <div v-if="isShowRandomOne">Now you see me</div>
+      <div v-else>Now you don't</div>
+
+      <!-- Key 管理可复用的元素 -->
+      <!-- Demo -->
+      <label for="username">
+        <input
+          type="radio"
+          name="loginType"
+          id="username"
+          v-model="loginType"
+          value="username"
+          key="username-input"
+        />
+        用户名
+      </label>
+
+      <label for="email">
+        <input
+          type="radio"
+          name="loginType"
+          id="email"
+          v-model="loginType"
+          value="email"
+          key="email-input"
+        />
+        邮箱
+      </label>
+
+      <div v-if="loginType === 'username'">
+        <label>用户名</label>
+        <input type="text" placeholder="请输入用户名" />
+      </div>
+      <div v-else>
+        <label>邮箱</label>
+        <input type="text" placeholder="请输入邮箱" />
+      </div>
+
+      <h1 v-show="ok">Hello!</h1>
+      <button @click="ok=!ok">{{ ok ? "隐藏" : "显示"}}</button>
+    </div>
+
+    <script>
+      const vm = new Vue({
+        el: '#app-1',
+        data: {
+          awesome: true,
+          hiddenTemplate: false,
+          loginType: 'username',
+          isShowRandomOne: Math.random() > 0.5,
+          ok: true,
+        },
+      })
+    </script>
+  </body>
+</html>

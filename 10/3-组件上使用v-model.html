@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="app-1">
+        <custom-input v-model="inputText"></custom-input>
+    </div>
+
+    <script>
+      Vue.component('custom-input', {
+        props: ['value'],
+        template: `
+          <div>
+            <input type="text" v-bind:value="value" v-on:input="$emit('input', $event.target.value)" />
+            <p>{{ value }}</p>
+          </div>
+        `,  
+      })
+
+      const vm = new Vue({
+        el: '#app-1',
+        data: {
+          inputText: ''
+        },
+        methods: {
+        },
+      })
+    </script>
+  </body>
+</html>

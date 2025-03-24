@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="app-1">
+      <v-user></v-user>
+      <v-user v-slot="{ user }"> {{ user.firstName }} </v-user>
+      <v-user v-slot="{ user }"> {{ user.age }} </v-user>
+      <v-user v-slot="{ user: my }"> {{ my.firstName + ' ' + my.lastName }} {{ my.age }} </v-user>
+      <v-user v-slot="{ books = ['三国演义', '水浒传'] }"> {{ books }} </v-user>
+    </div>
+
+    <script>
+      Vue.component('v-user', {
+        data: function () {
+          return {
+            user: {
+              firstName: 'Jim',
+              lastName: 'Green',
+              age: 18,
+            },
+            books: undefined
+          }
+        },
+        template: `
+        <div>
+          <p>
+            <slot :user="user" :books="books"> {{ user.lastName }} </slot>
+          </p>
+        </div>
+        `,
+      })
+
+      const vm = new Vue({
+        el: '#app-1',
+        data: {},
+      })
+    </script>
+  </body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+    <style>
+      body {
+        margin: 0;
+      }
+      #demo {
+        height: 200vh;
+        background-image: linear-gradient(
+          180deg,
+          rgba(255, 0, 0, 0.483),
+          rgba(0, 255, 0, 0.547)
+        );
+      }
+      .stickText {
+        border: 5px solid gold;
+        padding: 1rem;
+        border-radius: 10px;
+        margin: 10px;
+        background-color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="demo">
+      <p v-pin:left="10">
+        <button @click="direction = 'top'">top</button>
+        <button @click="direction = 'right'">right</button>
+        <button @click="direction = 'bottom'">bottom</button>
+        <button @click="direction = 'left'">left</button>
+      </p>
+      <p v-pin:[direction]="200" class="stickText">Stick me</p>
+    </div>
+
+    <script>
+      Vue.directive(
+        'pin',
+        // {
+        // bind: function (el, binding, vnode) {
+        //   const _ss = ['top', 'right', 'bottom', 'left']
+        //   const s = ~_ss.indexOf(binding.arg) ? binding.arg : 'top'
+        //   el.style.position = 'fixed'
+        //   el.style[s] = binding.value + 'px'
+        // },
+        // update: function (el, binding) {
+        //   const _ss = ['top', 'right', 'bottom', 'left']
+        //   el.style = ''
+        //   el.style.position = 'fixed'
+        //   if (~_ss.indexOf(binding.arg)) {
+        //     el.style[binding.arg] = binding.value + 'px'
+        //   } else {
+        //     el.style.top = binding.value + 'px'
+        //   }
+        // }}
+        function (el, binding) {
+          const _ss = ['top', 'right', 'bottom', 'left']
+          el.style = ''
+          el.style.position = 'fixed'
+          if (~_ss.indexOf(binding.arg)) {
+            el.style[binding.arg] = binding.value + 'px'
+          } else {
+            el.style.top = binding.value + 'px'
+          }
+        }
+      )
+
+      new Vue({
+        el: '#demo',
+        data: {
+          direction: 'top',
+        },
+      })
+    </script>
+  </body>
+</html>

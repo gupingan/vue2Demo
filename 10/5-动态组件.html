@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+    <style>
+      .tab-button {
+        padding: 6px 10px;
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+        border: 1px solid #ccc;
+        cursor: pointer;
+        background: #f0f0f0;
+        margin-bottom: -1px;
+        margin-right: -1px;
+      }
+      .tab-button:hover {
+        background: #e0e0e0;
+      }
+      .tab-button.active {
+        background: #e0e0e0;
+      }
+      .tab {
+        border: 1px solid #ccc;
+        padding: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app-1">
+      <button
+        v-for="tab in tabs"
+        :key="tab"
+        :class="['tab-button', { active: currentTab === tab}]"
+        @click="currentTab = tab"
+      >
+        {{tab}}
+      </button>
+
+      <component :is="currentTabComponent"></component>
+    </div>
+
+    <script>
+      Vue.component('tab-home', {
+        template: `
+          <div class="tab">
+            <h2>Home</h2>
+            <p>Home content</p>
+          </div>
+        `,
+      })
+
+      Vue.component('tab-posts', {
+        template: `
+          <div class="tab">
+            <h2>Posts</h2>
+            <p>Posts content</p>
+          </div>
+        `,
+      })
+
+      Vue.component('tab-archive', {
+        template: `
+          <div class="tab">
+            <h2>Archive</h2>
+            <p>Archive content</p>
+          </div>
+        `,
+      })
+
+      const vm = new Vue({
+        el: '#app-1',
+        data: {
+          currentTab: 'Home',
+          tabs: ['Home', 'Posts', 'Archive'],
+        },
+        methods: {},
+        computed: {
+          currentTabComponent: function () {
+            return 'tab-' + this.currentTab.toLowerCase()
+          },
+        },
+      })
+    </script>
+  </body>
+</html>

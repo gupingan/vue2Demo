@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="app-1">
+      <v-body>
+        <template v-slot:header>
+          <h1>Here might be a page title</h1>
+        </template>
+  
+        <!-- 缩写 v-slot: -> # -->
+        <template #footer>
+          <p>Here's some contact info</p>
+        </template>
+  
+        <p>A paragraph for the main content.</p>
+        <p>And another one.</p>
+      </v-body>
+    </div>
+
+    <script>
+      Vue.component('v-body', {
+        template: `
+        <div>
+          <header>
+            <slot name="header"></slot>
+          </header>
+          <main>
+            <slot name="default"></slot>
+          </main>
+          <footer>
+            <slot name="footer"></slot>
+          </footer>
+        </div>
+        `,
+      })
+
+      const vm = new Vue({
+        el: '#app-1',
+        data: {},
+      })
+    </script>
+  </body>
+</html>

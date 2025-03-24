@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+    <script src="../gsap.min.js"></script>
+    <script src="../tween.js"></script>
+    <script src="../color.js"></script>
+    <script>
+      const Color = net.brehaut.Color
+    </script>
+
+    <style>
+      .color-preview {
+        display: inline-block;
+        width: 50px;
+        height: 50px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="demo">
+      <input type="number" step="20" v-model.number="value" />
+      <p>{{ animatedValue }}</p>
+
+      <hr />
+
+      <input
+        v-model="colorQuery"
+        v-on:keyup.enter="updateColor"
+        placeholder="Enter a color"
+      />
+      <button v-on:click="updateColor">Update</button>
+      <p>Preview:</p>
+      <span
+        v-bind:style="{ backgroundColor: tweenedCSSColor }"
+        class="color-preview"
+      ></span>
+      <p>{{ tweenedCSSColor }}</p>
+    </div>
+
+    <script>
+      const vm = new Vue({
+        el: '#demo',
+        data: {
+          value: 0,
+          tweenedValue: 0,
+
+          colorQuery: '',
+          color: {
+            red: 0,
+            green: 0,
+            blue: 0,
+            alpha: 1,
+          },
+          tweenedColor: {},
+        },
+        created: function () {
+          this.tweenedColor = Object.assign({}, this.color)
+        },
+        computed: {
+          animatedValue() {
+            return this.tweenedValue.toFixed(0)
+          },
+          tweenedCSSColor() {
+            return new Color({ ...this.tweenedColor })
+          },
+        },
+        watch: {
+          value(newValue) {
+            gsap.to(this.$data, { duration: 1, tweenedValue: newValue })
+          },
+          color: function () {
+            function animate() {
+              if (TWEEN.update()) {
+                requestAnimationFrame(animate)
+              }
+            }
+
+            new TWEEN.Tween(this.tweenedColor).to(this.color, 750).start()
+
+            animate()
+          },
+        },
+        methods: {
+          updateColor() {
+            this.color = new Color(this.colorQuery).toRGB()
+          },
+        },
+      })
+    </script>
+  </body>
+</html>

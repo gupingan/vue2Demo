@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Document</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <v-div :current-index="1" :max-index="maxIndex"></v-div>
+    </div>
+
+    <script>
+      Vue.component('v-div', {
+        props: {
+          currentIndex: {
+            type: Number,
+            required: true,
+          },
+          maxIndex: {
+            type: Number,
+            required: true,
+          },
+        },
+        // 不加条件直接导致页面 Out of Memory
+        template: `
+          <div>
+            DIV {{ currentIndex }}
+            <v-div 
+              v-if="currentIndex < maxIndex" 
+              :current-index="currentIndex + 1"
+              :max-index="maxIndex"
+            ></v-div>
+          </div>
+        `,
+      })
+
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          maxIndex: 12
+        }
+      })
+    </script>
+  </body>
+</html>

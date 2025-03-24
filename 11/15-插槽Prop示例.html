@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+    <style>
+      .todo-list {
+        list-style: none;
+        padding: 1rem;
+        margin: 0;
+        border: 1px solid #000;
+      }
+
+      .todo-list > .todo-item {
+        border-radius: .5rem;
+        padding: .3rem;
+        height: 2rem;
+        line-height: 2rem;
+        transition: all .2s ease-in-out;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .todo-list > .todo-seperater:not(:last-child) {
+        height: 1px;
+        width: 100%;
+        background-color: #0003;
+        margin: .3rem 0;
+      }
+
+      .todo-list > .todo-item:hover {
+        background-color: #0001;
+      }
+
+      .todo-list > .todo-item:active {
+        background-color: #0002;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app-1">
+      <v-todos :todos="todos">
+        <template #todo="{ todo }">
+          <span v-if="todo.isComplete">√</span>
+          <span v-else>x</span>
+          <span>{{ todo.text }}</span>
+        </template>
+      </v-todos>
+
+      <input type="text" v-model="newTodoText">
+      <button type="submit" @click="addNewTodo">添加</button>
+    </div>
+
+    <script>
+      Vue.component('v-todos', {
+        props: {
+          todos: {
+            type: Array,
+            required: true
+          }
+        },
+        methods: {
+          toggleTodo(todo) {
+            console.log(todo)
+            todo.isComplete = !todo.isComplete
+          },
+          deleteTodo(todo) {
+            const index = this.todos.indexOf(todo)
+            this.todos.splice(index, 1)
+          }
+        },
+        template: `
+        <ul class="todo-list">
+          <template v-for="todo in todos" >
+            <li class="todo-item" @click="toggleTodo(todo)" @dblclick="deleteTodo(todo)">
+              <slot name="todo" :todo="todo"></slot>
+            </li>
+            <div class="todo-seperater"></div>
+          </template>
+        </ul>
+        `
+      })
+
+      const vm = new Vue({
+        el: '#app-1',
+        data: {
+          newTodoText: '',
+          todos: [
+            {
+              id: 1,
+              text: '学习 Vue',
+              isComplete: false,
+            },
+            {
+              id: 2,
+              text: '学习 JavaScript',
+              isComplete: true,
+            },
+            {
+              id: 3,
+              text: '学习 ES6',
+              isComplete: true,
+            },
+            {
+              id: 4,
+              text: '学习 Vuex',
+              isComplete: false,
+            },
+          ],
+        },
+        methods: {
+          addNewTodo() {
+            if (this.newTodoText.trim() === '') {
+              return
+            }
+
+            const maxId = this.todos.reduce((maxId, todo) => {
+              return Math.max(maxId, todo.id)
+            }, 0)
+
+            this.todos.push({
+              id: maxId + 1,
+              text: this.newTodoText,
+              isComplete: false,
+            })
+          }
+        },
+      })
+    </script>
+  </body>
+</html>
