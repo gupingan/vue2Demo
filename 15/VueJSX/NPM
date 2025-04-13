@@ -1,0 +1,11 @@
+npm init -y
+npm install webpack webpack-cli -D
+npm install style-loader css-loader -D
+npm install html-webpack-plugin -D
+npm install webpack-dev-server -D
+
+> npm run build
+
+npm install vue@2
+npm install babel-loader -D
+npm install @babel/core @babel/preset-env -D

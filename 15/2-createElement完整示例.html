@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="demo">
+      <anchored-heading :level="2"> Hello world! </anchored-heading>
+    </div>
+
+    <script>
+      function getChildrenTextContent(children) {
+        return Array.prototype.map
+          .call(children, (node) => {
+            return node.children
+              ? getChildrenTextContent(node.children)
+              : node.text
+          })
+          .join('')
+      }
+
+      Vue.component('anchored-heading', {
+        props: {
+          level: {
+            type: Number,
+            default: 1,
+          },
+        },
+        render(h) {
+          const headingId = getChildrenTextContent(this.$slots.default)
+            .toLowerCase()
+            .replace(/\W+/g, '-')
+            .replace(/(^-|-$)/g, '')
+
+          return h(`h${this.level}`, [
+            h(
+              'a',
+              {
+                attrs: {
+                  name: headingId,
+                  href: `#${headingId}`,
+                },
+              },
+              this.$slots.default
+            ),
+          ])
+        },
+      })
+
+      new Vue({
+        el: '#demo',
+      })
+    </script>
+  </body>
+</html>

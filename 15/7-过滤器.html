@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+    <script src="../MD5.js"></script>
+  </head>
+  <body>
+    <div class="app">
+      <input type="text" v-model="text">
+      <p>{{ text | MD5 | format('MD5') }}</p>
+    </div>
+
+    <script>
+      // 过滤器支持 串联调用、额外参数调用
+      const app = new Vue({
+        el: '.app',
+        filters: {
+          format(value, prefix) {
+            return `${prefix}: ${value}`
+          },
+          MD5(value) {
+            return hex_md5(value)
+          },
+        },
+        data: {
+          text: '',
+        },
+      })
+    </script>
+  </body>
+</html>

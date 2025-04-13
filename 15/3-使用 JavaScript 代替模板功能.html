@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../vue.js"></script>
+  </head>
+  <body>
+    <div id="demo">
+      <my-list :items="items"></my-list>
+      <btn-counter v-model="count"> 点击了 {{ count }} 次 </btn-counter>
+
+      <v-paragraph></v-paragraph>
+      <v-paragraph-v2></v-paragraph-v2>
+      <v-paragraph-v2 text="你好世界"></v-paragraph-v2>
+      <v-paragraph-v2 :text="gText"></v-paragraph-v2>
+    </div>
+
+    <script>
+      Vue.component('my-list', {
+        props: ['items'],
+        render(h) {
+          // v-if
+          if (this.items.length) {
+            return h(
+              'ul',
+              // v-for
+              this.items.map((item) => {
+                return h('li', item.name)
+              })
+            )
+          } else {
+            return h('p', 'No items found.')
+          }
+        },
+      })
+
+      Vue.component('btn-counter', {
+        props: {
+          count: {
+            type: Number,
+            required: true,
+          },
+        },
+        model: {
+          prop: 'count',
+          event: 'change',
+        },
+        render(h) {
+          const vm = this
+
+          return h(
+            'button',
+            {
+              on: {
+                click(e) {
+                  if (e.target !== e.currentTarget) return
+                  vm.$emit('change', vm.count + 1)
+                },
+              },
+            },
+            vm.$slots.default.map((node) => {
+              return node.text ?? ''
+            })
+          )
+        },
+      })
+
+      Vue.component('v-paragraph', {
+        props: ['text'],
+        template: `<p>文本……<slot :text='text'></slot></p>`,
+      })
+
+      Vue.component('v-paragraph-v2', {
+        props: ['text'],
+        render(h) {
+          // 返回组件 v1
+          return h('v-paragraph', {
+            props: {
+              text: this.text,
+            },
+            scopedSlots: {
+            // 向组件 v1 插入 default 插槽
+              default(props) {
+                // 组件 v1 插槽传递的参数
+                return h('i', props.text ?? '空插槽文本')
+              },
+            },
+          })
+        },
+      })
+
+      const vm = new Vue({
+        el: '#demo',
+        data: {
+          items: [
+            { id: 1, name: 'Jerry' },
+            { id: 2, name: 'Tom' },
+            { id: 3, name: 'Mike' },
+          ],
+          count: 0,
+          gText: 'Hello!'
+        },
+      })
+    </script>
+  </body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="../vue.js"></script>
+</head>
+<body>
+  <div class="app">
+    <v-user @click="handleClick" name="Jim" age="18">
+      yes
+      <p>cookie</p>
+    </v-user>
+  </div>
+
+  <script>
+    Vue.component('v-user', {
+      functional: true,
+      render: function (h, context) {
+        console.log(context.data)
+        return h('div', [
+          h('p', `name: ${context.props.name}`),
+          h('p', `age:${context.props.age}`),
+          h('p', [
+            h('p', 'Other:'),
+            context.children
+          ]),
+          // 实现透传
+          h('button', context.data, 'click me')
+        ])
+      }
+    })
+
+    const app = new Vue({
+      el: '.app',
+      methods: {
+        handleClick (e) {
+          console.log('click me!')
+          console.log(e)
+        }
+      }
+    })
+
+    const template = `
+  <div class="app">
+    <v-user @click="handleClick" name="Jim" age="18">
+      yes
+      <p>cookie</p>
+    </v-user>
+  </div>
+    `
+
+    console.log(Vue.compile)
+    console.log(Vue.compile(template))
+    console.log(Vue.compile(template).render)
+    console.log(Vue.compile(template).staticRenderFns)
+  </script>
+</body>
+</html>
